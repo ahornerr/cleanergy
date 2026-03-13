@@ -43,7 +43,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             try:
-                await self.async_abort_entries_match({"host": user_input["host"]})
                 ok = await _test_connection(user_input["host"], user_input.get("port", DEFAULT_PORT))
                 if not ok:
                     errors["base"] = "cannot_connect"
