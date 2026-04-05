@@ -1,7 +1,9 @@
 """Config flow for Cleanergy S012 integration."""
+
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 from typing import Any
 
@@ -10,16 +12,32 @@ from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 
-from .const import DEFAULT_IP, DEFAULT_PORT, DOMAIN
-from .coordinator import _query_batch
+from .const import CMD_QUERY, DEFAULT_IP, DEFAULT_PORT, DOMAIN
+from .coordinator import _frame
 
 _LOGGER = logging.getLogger(__name__)
 
 
 async def _test_connection(host: str, port: int) -> bool:
-    """Try to query attr 3 (battery_soc) to validate device is reachable."""
-    data = await _query_batch(host, port, [3])
-    return bool(data)
+    writer = None
+    try:
+        reader, writer = await asyncio.wait_for(
+            asyncio.open_connection(host, port), timeout=5.0
+        )
+        writer.write(_frame(CMD_QUERY, {"attr": [3]}))
+        await writer.drain()
+        raw = await asyncio.wait_for(reader.readuntil(b"\r\n"), timeout=3.0)
+        obj = json.loads(raw.decode())
+        return bool(obj.get("msg", {}).get("data"))
+    except Exception:
+        return False
+    finally:
+        if writer is not None:
+            writer.close()
+            try:
+                await writer.wait_closed()
+            except Exception:
+                pass
 
 
 STEP_USER_DATA_SCHEMA = vol.Schema(
@@ -43,7 +61,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             try:
-                ok = await _test_connection(user_input["host"], user_input.get("port", DEFAULT_PORT))
+                ok = await _test_connection(
+                    user_input["host"], user_input.get("port", DEFAULT_PORT)
+                )
                 if not ok:
                     errors["base"] = "cannot_connect"
                 else:
