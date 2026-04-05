@@ -69,11 +69,9 @@ class CleanergyOutputSwitch(CoordinatorEntity[CleanergyCoordinator], SwitchEntit
 
     async def async_turn_on(self, **kwargs) -> None:
         await self.coordinator.async_set_switch_bit(self._bit, True)
-        await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs) -> None:
         await self.coordinator.async_set_switch_bit(self._bit, False)
-        await self.coordinator.async_request_refresh()
 
 
 async def async_setup_entry(

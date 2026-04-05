@@ -41,9 +41,5 @@ ATTRIBUTES: Final[dict] = {
     114: ("dc_standby_time", "min", 1.0),
 }
 
-# Fast mode attributes (high-frequency polling)
-FAST_ATTRS = [1, 3, 4, 5, 21, 22, 23, 30, 32, 105]
-
-# Slow mode attributes — polled every SLOW_POLL_EVERY fast cycles (~100 s at default 10 s interval)
-SLOW_ATTRS = [6, 7, 8, 9, 40, 41, 49, 51, 103, 104, 110, 111, 112, 113, 114]
-SLOW_POLL_EVERY = 10
+POLL_ATTRS = [1, 3, 4, 5, 21, 22, 23, 30, 32, 105]
+CONFIG_ATTRS = [6, 7, 8, 9, 40, 41, 49, 51, 103, 104, 110, 111, 112, 113, 114]
