@@ -1,4 +1,5 @@
 """Home Assistant sensors for Cleanergy S012."""
+
 from __future__ import annotations
 
 import logging
@@ -30,62 +31,45 @@ _LOGGER = logging.getLogger(__name__)
 
 # Map unit strings from const.py → HA unit constants
 _UNIT_MAP: Final = {
-    "W":   UnitOfPower.WATT,
-    "mV":  UnitOfElectricPotential.MILLIVOLT,
-    "mA":  UnitOfElectricCurrent.MILLIAMPERE,
-    "%":   PERCENTAGE,
+    "W": UnitOfPower.WATT,
+    "mV": UnitOfElectricPotential.MILLIVOLT,
+    "mA": UnitOfElectricCurrent.MILLIAMPERE,
+    "%": PERCENTAGE,
     "min": UnitOfTime.MINUTES,
-    "°F":  UnitOfTemperature.FAHRENHEIT,
-    "°C":  UnitOfTemperature.CELSIUS,
+    "°F": UnitOfTemperature.FAHRENHEIT,
+    "°C": UnitOfTemperature.CELSIUS,
 }
 
 # Map attr names → SensorDeviceClass
 _DEVICE_CLASS_MAP: Final = {
-    "battery_soc":       SensorDeviceClass.BATTERY,
-    "battery_pack_soc":  SensorDeviceClass.BATTERY,
-    "total_dc_output":   SensorDeviceClass.POWER,
-    "ac_output":         SensorDeviceClass.POWER,
-    "car_output":        SensorDeviceClass.POWER,
-    "usb_c_pd_output":   SensorDeviceClass.POWER,
-    "usb_a_output":      SensorDeviceClass.POWER,
-    "output_12v":        SensorDeviceClass.POWER,
-    "total_input":       SensorDeviceClass.POWER,
-    "total_input_alt":   SensorDeviceClass.POWER,
-    "ac_grid_input":     SensorDeviceClass.POWER,
-    "solar_pv_input":    SensorDeviceClass.POWER,
-    "generator_output":  SensorDeviceClass.POWER,
-    "dfc_charge_power":  SensorDeviceClass.POWER,
-    "battery_out_power":  SensorDeviceClass.POWER,
-    "temperature":       SensorDeviceClass.TEMPERATURE,
-    "temperature_42":    SensorDeviceClass.TEMPERATURE,
-    "temperature_47":    SensorDeviceClass.TEMPERATURE,
-    "temperature_52":    SensorDeviceClass.TEMPERATURE,
-    "temperature_77":    SensorDeviceClass.TEMPERATURE,
-    "temperature_82":    SensorDeviceClass.TEMPERATURE,
-    "battery_pack_temp": SensorDeviceClass.TEMPERATURE,
-    "dfc_temp":          SensorDeviceClass.TEMPERATURE,
-    "remaining_time":    SensorDeviceClass.DURATION,
-    "standby_timeout":   SensorDeviceClass.DURATION,
-    "led_timeout":       SensorDeviceClass.DURATION,
-    "ac_standby_time":   SensorDeviceClass.DURATION,
-    "dc_standby_time":   SensorDeviceClass.DURATION,
-    "battery_rem_time":  SensorDeviceClass.DURATION,
-    "battery_voltage":   SensorDeviceClass.VOLTAGE,
-    "battery_start_volt": SensorDeviceClass.VOLTAGE,
-    "dfc_charge_voltage": SensorDeviceClass.VOLTAGE,
-    "current_electric":  SensorDeviceClass.CURRENT,
+    "battery_soc": SensorDeviceClass.BATTERY,
+    "total_output": SensorDeviceClass.POWER,
+    "ac_output": SensorDeviceClass.POWER,
+    "car_output": SensorDeviceClass.POWER,
+    "usb_c_pd_output": SensorDeviceClass.POWER,
+    "usb_a_output": SensorDeviceClass.POWER,
+    "output_12v": SensorDeviceClass.POWER,
+    "total_input": SensorDeviceClass.POWER,
+    "ac_grid_input": SensorDeviceClass.POWER,
+    "solar_pv_input": SensorDeviceClass.POWER,
+    "generator_output": SensorDeviceClass.POWER,
+    "temperature": SensorDeviceClass.TEMPERATURE,
+    "remaining_time": SensorDeviceClass.DURATION,
+    "standby_timeout": SensorDeviceClass.DURATION,
+    "led_timeout": SensorDeviceClass.DURATION,
+    "ac_standby_time": SensorDeviceClass.DURATION,
+    "dc_standby_time": SensorDeviceClass.DURATION,
 }
 
 # Attrs to expose as HA sensors (skip low-value zeros and temp duplicates)
 SENSOR_ATTR_IDS: Final = [
-    1,   # switch_state
-    3,   # battery_soc
-    4,   # total_dc_output
-    5,   # ac_output
-    6,   # car_output
-    7,   # usb_c_pd_output
-    8,   # usb_a_output
-    9,   # output_12v
+    3,  # battery_soc
+    4,  # total_output
+    5,  # ac_output
+    6,  # car_output
+    7,  # usb_c_pd_output
+    8,  # usb_a_output
+    9,  # output_12v
     21,  # total_input
     22,  # ac_grid_input
     23,  # solar_pv_input
@@ -95,14 +79,14 @@ SENSOR_ATTR_IDS: Final = [
     41,  # led_timeout
     49,  # ac_standby_time
     51,  # battery_pack_count
-    103, # oil_volume
-    104, # generator_output
-    105, # fast_charge_state
-    110, # ac_eco_switch
-    111, # ac_eco_threshold
-    112, # dc_eco_switch
-    113, # dc_eco_threshold
-    114, # dc_standby_time
+    103,  # oil_volume
+    104,  # generator_output
+    105,  # fast_charge_state
+    110,  # ac_eco_switch
+    111,  # ac_eco_threshold
+    112,  # dc_eco_switch
+    113,  # dc_eco_threshold
+    114,  # dc_standby_time
 ]
 
 
@@ -133,7 +117,7 @@ class CleanergySensor(CoordinatorEntity[CleanergyCoordinator], SensorEntity):
         data = self.coordinator.data
         if not data:
             return None
-        raw = data.get(str(self._attr_id))
+        raw = data.get(self._attr_id)
         if raw is None:
             return None
         try:

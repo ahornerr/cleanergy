@@ -12,15 +12,10 @@ set_power_ac:
   fields:
     state:
       name: State
-      description: 0=off, 1=on
+      description: true=on, false=off
       default: true
       selector:
         boolean:
-  target:
-      entity:
-        integration: cleanergy
-        domain: switch
-        device_class: switch
 
 set_power_dc:
   name: Set DC output
@@ -28,12 +23,7 @@ set_power_dc:
   fields:
     state:
       name: State
-      description: 0=off, 1=on
+      description: true=on, false=off
       default: true
       selector:
         boolean:
-  target:
-      entity:
-        integration: cleanergy
-        domain: switch
-        device_class: switch
