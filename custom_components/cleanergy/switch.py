@@ -10,6 +10,7 @@ Confirmed values:
   2 = DC only
   3 = both on
 """
+
 from __future__ import annotations
 
 import logging
@@ -58,7 +59,7 @@ class CleanergyOutputSwitch(CoordinatorEntity[CleanergyCoordinator], SwitchEntit
         data = self.coordinator.data
         if not data:
             return None
-        raw = data.get("1")
+        raw = data.get(1)
         if raw is None:
             return None
         try:
@@ -81,7 +82,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     coordinator: CleanergyCoordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([
-        CleanergyOutputSwitch(coordinator, _AC_BIT, "AC Output"),
-        CleanergyOutputSwitch(coordinator, _DC_BIT, "DC Output"),
-    ])
+    async_add_entities(
+        [
+            CleanergyOutputSwitch(coordinator, _AC_BIT, "AC Output"),
+            CleanergyOutputSwitch(coordinator, _DC_BIT, "DC Output"),
+        ]
+    )
